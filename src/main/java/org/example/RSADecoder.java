@@ -1,17 +1,15 @@
 package org.example;
 
+import lombok.RequiredArgsConstructor;
+
 import java.io.IOException;
 import java.math.BigInteger;
 
+@RequiredArgsConstructor
 public class RSADecoder {
 
     private final BigInteger d;
     private final BigInteger n;
-
-    public RSADecoder(BigInteger d, BigInteger n) {
-        this.d = d;
-        this.n = n;
-    }
 
     public BigInteger decrypt(BigInteger message) throws IOException {
         BigInteger decrypted = message.modPow(d, n);

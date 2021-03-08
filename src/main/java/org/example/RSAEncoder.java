@@ -1,17 +1,15 @@
 package org.example;
 
+import lombok.RequiredArgsConstructor;
+
 import java.io.IOException;
 import java.math.BigInteger;
 
+@RequiredArgsConstructor
 public class RSAEncoder {
 
     private final BigInteger e;
     private final BigInteger n;
-
-    public RSAEncoder(BigInteger e, BigInteger n) {
-        this.e = e;
-        this.n = n;
-    }
 
     public BigInteger encrypt(String message) throws IOException {
         BigInteger bigIntegerMessage = new BigInteger(message.getBytes());
@@ -20,7 +18,6 @@ public class RSAEncoder {
         System.out.println(bigIntegerMessage.toString(2));
         System.in.read();
         return encrypt(bigIntegerMessage);
-
     }
 
     public BigInteger encrypt(BigInteger message) throws IOException {
@@ -31,18 +28,4 @@ public class RSAEncoder {
         System.in.read();
         return encrypted;
     }
-
-//
-//    public byte[] encrypt(String message) {
-//        byte[] bytes = message.getBytes();
-//        System.out.println("Converted message from String : \"" + message + "\" to byte array: " + Arrays.toString(bytes));
-//        return encrypt(bytes);
-//
-//    }
-//
-//    public byte[] encrypt(byte[] message) {
-//        byte[] encrypted = new BigInteger(message).modPow(e, n).toByteArray();
-//        System.out.println("Encrypted message from: " + Arrays.toString(message) + " to: " + Arrays.toString(encrypted));
-//        return encrypted;
-//    }
 }
