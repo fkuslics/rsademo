@@ -11,7 +11,19 @@ public class RSADecoder {
     private final BigInteger d;
     private final BigInteger n;
 
-    public BigInteger decrypt(BigInteger message) throws IOException {
+    /**
+     * Decrypts the encrypted message
+     * encryptedMessage^d mod n
+     *
+     * @param encryptedMessage RSA encrypted message
+     * @return the decrypted message
+     * @throws IOException
+     */
+    public String decryptToString(BigInteger encryptedMessage) throws IOException {
+        return bigIntToString(decrypt(encryptedMessage));
+    }
+
+    private BigInteger decrypt(BigInteger message) throws IOException {
         BigInteger decrypted = message.modPow(d, n);
         System.out.println("Decrypted message from: " + message + " to: ");
         System.out.println(decrypted);
@@ -20,13 +32,9 @@ public class RSADecoder {
         return decrypted;
     }
 
-    public String decryptToString(BigInteger message) throws IOException {
-        return bigIntToString(decrypt(message));
-    }
-
     private String bigIntToString(BigInteger message) throws IOException {
         String messageString = new String(message.toByteArray());
-        System.out.println("Converted message from byte array: " + message + " to String: \"" + messageString + "\"");
+        System.out.println("Converted message from number: " + message + " to String: \"" + messageString + "\"");
         System.in.read();
         return messageString;
     }

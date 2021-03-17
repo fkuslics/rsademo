@@ -11,6 +11,14 @@ public class RSAEncoder {
     private final BigInteger e;
     private final BigInteger n;
 
+    /**
+     * Converts the given message string to number and returns it encrypted
+     * (message^e) mod n
+     *
+     * @param message
+     * @return the encrypted message
+     * @throws IOException
+     */
     public BigInteger encrypt(String message) throws IOException {
         BigInteger bigIntegerMessage = new BigInteger(message.getBytes());
         System.out.println("Converted message from String : \"" + message + "\" to:");
@@ -20,7 +28,7 @@ public class RSAEncoder {
         return encrypt(bigIntegerMessage);
     }
 
-    public BigInteger encrypt(BigInteger message) throws IOException {
+    private BigInteger encrypt(BigInteger message) throws IOException {
         BigInteger encrypted = message.modPow(e, n); //((message^e) mod n)
         System.out.println("Encrypted message from: " + message + " to:");
         System.out.println(encrypted);

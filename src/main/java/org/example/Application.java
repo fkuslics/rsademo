@@ -13,41 +13,44 @@ public class Application {
 
         RSAInitializer rsaInitializer = new RSAInitializer();
 
-        BigInteger p = rsaInitializer.getP(); // P is a large prime number random generated
-        BigInteger q = rsaInitializer.getQ(p); // Q is also a large prime number random generated
+        BigInteger p = rsaInitializer.getP();
+        BigInteger q = rsaInitializer.getQ(p);
+
         // convention is p > q, swap if needed!
         if (p.compareTo(q) < 0) {
             BigInteger tmp = p;
             p = q;
             q = tmp;
         }
-        print(p, "P (Generated prime nr.):");
-        print(q, "Q (Generated prime nr.):");
+
+        print(p, "P:");
+        print(q, "Q:");
 
         BigInteger n = rsaInitializer.getN(p, q); // N = P*Q
         print(n, "N (P*Q):");
 
-        BigInteger e = rsaInitializer.getE(); // E is also a prime number from configuration
-        print(e, "E (Public key component):");
+        BigInteger phiN = rsaInitializer.getPhiN(p, q);
+        print(phiN, "ϕ(N):");
 
-        BigInteger phiN = rsaInitializer.getPhiN(p, q); // ϕ(N)=(p-1)*(q-1)
-        print(phiN, "ϕ(N) (Euler phi function, (P-1)*(Q-1)):");
+        BigInteger e = rsaInitializer.getE();
+        print(e, "E:");
 
-        BigInteger d = rsaInitializer.getD(e, phiN);// d=((e^-1) mod ϕ(N))
-        print(d, "D (Private key component ((E^-1) mod ϕ(N))):");
+        BigInteger d = rsaInitializer.getD(e, phiN);
+        print(d, "D:");
 
         System.out.println("Now, we have everything to create an encoder and a decoder");
+        System.in.read();
 
         RSAEncoder encoder = new RSAEncoder(e, n);
 
-        BigInteger encryptedMessage = encoder.encrypt(message); //((message^e) mod n)
+        BigInteger encryptedMessage = encoder.encrypt(message);
 
         System.out.println("Passing ecrypted message from encoder to decoder...");
-        System.out.println();
+        System.in.read();
 
         RSADecoder decoder = new RSADecoder(d, n);
 
-        String decryptedMessage = decoder.decryptToString(encryptedMessage); //((encryptedMessage^d) mod n)
+        String decryptedMessage = decoder.decryptToString(encryptedMessage);
 
         System.out.println("Decrypted message: \"" + decryptedMessage + "\"");
     }
@@ -55,7 +58,10 @@ public class Application {
     private static String getMessage() throws IOException {
         System.out.println("Enter message:");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-        String message = bufferedReader.readLine();
+        String message;
+        do {
+             message = bufferedReader.readLine();
+        } while (message.trim().isEmpty());
         System.out.println("Message: " + message);
         System.out.println();
         return message;
