@@ -2,7 +2,6 @@ package org.example;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.function.Supplier;
 
 import static org.example.RSAConfiguration.E_VALUE;
 import static org.example.RSAConfiguration.KEY_SIZE;
@@ -15,19 +14,17 @@ public class RSAInitializer {
     private final SecureRandom secureRandom = new SecureRandom();
 
     public BigInteger getP() {
-        return executeWithTimer(() -> BigInteger.probablePrime(LP, secureRandom), "getP");
+        return BigInteger.probablePrime(LP, secureRandom);
     }
 
     public BigInteger getQ(BigInteger p) {
-        return executeWithTimer(() -> {
-            BigInteger q = BigInteger.probablePrime(LQ, secureRandom);
-            BigInteger n = p.multiply(q);
-            while (n.bitLength() < KEY_SIZE) {
-                q = BigInteger.probablePrime(LQ, secureRandom);
-                n = p.multiply(q);
-            }
-            return q;
-        }, "getQ");
+        BigInteger q = BigInteger.probablePrime(LQ, secureRandom);
+        BigInteger n = p.multiply(q);
+        while (n.bitLength() < KEY_SIZE) {
+            q = BigInteger.probablePrime(LQ, secureRandom);
+            n = p.multiply(q);
+        }
+        return q;
     }
 
     /**
@@ -39,7 +36,7 @@ public class RSAInitializer {
      * @return (p - 1)*(q - 1)
      */
     public BigInteger getN(BigInteger p, BigInteger q) {
-        return executeWithTimer(() -> p.multiply(q), "getN");
+        return p.multiply(q);
     }
 
     /**
@@ -50,7 +47,7 @@ public class RSAInitializer {
      * @return (p - 1)*(q - 1)
      */
     public BigInteger getPhiN(BigInteger p, BigInteger q) {
-        return executeWithTimer(() -> p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE)), "getPhiN");
+        return p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
     }
 
     /**
@@ -61,26 +58,24 @@ public class RSAInitializer {
      * @return e number from configuration
      */
     public BigInteger getE() {
-        return executeWithTimer(() -> E_VALUE, "getE");
+        return E_VALUE;
     }
 
     /**
-     * d=((e^-1) mod ϕ(N))
      * multiplicative inverse of e mod ϕ(N)
+     * <p>
+     * find d such that e*d ≡ 1(mod phiN) -> e*d mod ϕ(N) = 1
+     * <p>
      * (Extended Euclidean algorithm)
+     *      ax+by=gcd(a,b) //gcd(e,ϕ(N))=1
+     *      -> ex+φ(n)y=1 -> ex≡1(modφ(n)) // x=d
+     *      -> ed≡1(modφ(n))
      *
      * @param e
      * @param phiN
-     * @return d such that e*d ≡ 1(mod phiN).
+     * @return d
      */
     public BigInteger getD(BigInteger e, BigInteger phiN) {
-        return executeWithTimer(() -> e.modInverse(phiN), "getD");
-    }
-
-    private <T> T executeWithTimer(Supplier<T> supplier, String methodName) {
-        long start = System.currentTimeMillis();
-        T t = supplier.get();
-//        System.out.println(methodName + " executed in " + (System.currentTimeMillis() - start) + " ms");
-        return t;
+        return e.modInverse(phiN);
     }
 }

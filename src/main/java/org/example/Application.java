@@ -13,8 +13,8 @@ public class Application {
 
         RSAInitializer rsaInitializer = new RSAInitializer();
 
-        BigInteger p = rsaInitializer.getP();
-        BigInteger q = rsaInitializer.getQ(p);
+        BigInteger p = rsaInitializer.getP(); // Prime
+        BigInteger q = rsaInitializer.getQ(p); // Prime
 
         // convention is p > q, swap if needed!
         if (p.compareTo(q) < 0) {
@@ -26,16 +26,16 @@ public class Application {
         print(p, "P:");
         print(q, "Q:");
 
-        BigInteger n = rsaInitializer.getN(p, q); // N = P*Q
+        BigInteger n = rsaInitializer.getN(p, q); // N = P*Q, bit-length of N is usually 2048
         print(n, "N (P*Q):");
 
-        BigInteger phiN = rsaInitializer.getPhiN(p, q);
+        BigInteger phiN = rsaInitializer.getPhiN(p, q); // ϕ(N) = (P-1) * (Q-1)
         print(phiN, "ϕ(N):");
 
-        BigInteger e = rsaInitializer.getE();
+        BigInteger e = rsaInitializer.getE(); // Usually 65537
         print(e, "E:");
 
-        BigInteger d = rsaInitializer.getD(e, phiN);
+        BigInteger d = rsaInitializer.getD(e, phiN); // multiplicative inverse of e mod ϕ(N) (Extended Euclidean algorithm)
         print(d, "D:");
 
         System.out.println("Now, we have everything to create an encoder and a decoder");
@@ -43,14 +43,14 @@ public class Application {
 
         RSAEncoder encoder = new RSAEncoder(e, n);
 
-        BigInteger encryptedMessage = encoder.encrypt(message);
+        BigInteger encryptedMessage = encoder.encrypt(message); // modular exponentiation
 
-        System.out.println("Passing ecrypted message from encoder to decoder...");
+        System.out.println("Passing encrypted message from encoder to decoder...");
         System.in.read();
 
         RSADecoder decoder = new RSADecoder(d, n);
 
-        String decryptedMessage = decoder.decryptToString(encryptedMessage);
+        String decryptedMessage = decoder.decryptToString(encryptedMessage); // modular exponentiation
 
         System.out.println("Decrypted message: \"" + decryptedMessage + "\"");
     }
